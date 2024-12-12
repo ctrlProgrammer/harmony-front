@@ -9,15 +9,20 @@ import { faJediOrder } from "@fortawesome/free-brands-svg-icons";
 import { faAlignCenter, faFire, faMapLocation, faMapMarked, faMapPin, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faMapLocationDot } from "@fortawesome/free-solid-svg-icons/faMapLocationDot";
 import { useEffect, useState } from "react";
-import { MapMode } from "@/app/core/types";
+import { MapMode, MapRegion } from "@/app/core/types";
 
 import Switch from "@mui/material/Switch";
 import { FormControlLabel } from "@mui/material";
+
+import MexicoNeighboors from "../../core/data/mexico_ne.json";
+import Markers from "../../core/data/data_test.json";
 
 const DEFAULT_CENTER = { lat: 19.431727519606884, lng: -99.1347848053937 };
 
 export const DashboardPageComponent = () => {
   const [center, setCenter] = useState(DEFAULT_CENTER);
+
+  const [selectedDistrict, setSelectedDistrict] = useState<MapRegion | null>(null);
 
   // Configuration
   const [configDistricts, setDistricts] = useState(true);
@@ -50,7 +55,18 @@ export const DashboardPageComponent = () => {
           </div>
         </div>
         <div className={styles.map}>
-          <MapView focusOnSales={configFocusOnSales} focusOnLiters={configFocusOnLiters} focusOnUnits={configFocusOnUnits} showDistricts={configDistricts} mapMode={configHeatMap ? MapMode.HEAT : MapMode.NORMAL} center={center} onChangeCenter={(coords) => setCenter(coords)} defaultCenter={center} />
+          <MapView
+            distributorsData={Markers}
+            mexicoData={MexicoNeighboors}
+            focusOnSales={configFocusOnSales}
+            focusOnLiters={configFocusOnLiters}
+            focusOnUnits={configFocusOnUnits}
+            showDistricts={configDistricts}
+            mapMode={configHeatMap ? MapMode.HEAT : MapMode.NORMAL}
+            center={center}
+            onChangeCenter={(coords) => setCenter(coords)}
+            defaultCenter={center}
+          />
         </div>
         <div className={styles.mapConfig}>
           <h4>Configuration</h4>
@@ -105,6 +121,21 @@ export const DashboardPageComponent = () => {
           </div>
         </div>
       </div>
+      {selectedDistrict ? (
+        <div className={styles.distribution}>
+          <div className={styles.header}>
+            <div>
+              <h4>District information</h4>
+              <p>Everything about the district</p>
+            </div>
+            <div>
+              <FontAwesomeIcon onClick={() => setCenter(DEFAULT_CENTER)} icon={faMapPin} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

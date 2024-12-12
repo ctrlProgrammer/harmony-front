@@ -60,4 +60,9 @@
 
 .mapConfig > div {
   padding: 10px 15px;
+  text-transform: uppercase;
+}
+
+.mapConfig > div > label > span {
+  font-size: 12px;
 }

@@ -1,8 +1,6 @@
 import { APIProvider, Map, Marker, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
 import styles from "./mapView.module.css";
 
-import MexicoNeighboors from "../../../core/data/mexico_ne.json";
-import Markers from "../../../core/data/data_test.json";
 import { Circle } from "./components/circle";
 import { useEffect, useState } from "react";
 import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion } from "@/app/core/types";
@@ -17,6 +15,8 @@ interface MapViewProps {
   focusOnSales: boolean;
   focusOnLiters: boolean;
   focusOnUnits: boolean;
+  mexicoData: MapRegion[];
+  distributorsData: MapMarker[];
   onChangeCenter: (coors: MapCoords) => void;
 }
 
@@ -39,15 +39,15 @@ export const MapView = (props: MapViewProps) => {
     let totalSales = 0;
     let totalUnits = 0;
 
-    if (Markers && Array.isArray(Markers)) {
-      for (let i = 0; i < Markers.length; i++) {
-        const distance = distanceBetweenPoints(Number(selectedRegion.latitude), Number(selectedRegion.longitude), Markers[i].latitude, Markers[i].longitude);
+    if (props.distributorsData && Array.isArray(props.distributorsData)) {
+      for (let i = 0; i < props.distributorsData.length; i++) {
+        const distance = distanceBetweenPoints(Number(selectedRegion.latitude), Number(selectedRegion.longitude), props.distributorsData[i].latitude, props.distributorsData[i].longitude);
 
         if (distance * 1000 < selectedRegion.radius) {
-          totalLiters += Markers[i].sales_liters;
-          totalSales += Markers[i].sales_usd;
-          totalUnits += Markers[i].sales_units;
-          points.push(Markers[i]);
+          totalLiters += props.distributorsData[i].sales_liters;
+          totalSales += props.distributorsData[i].sales_usd;
+          totalUnits += props.distributorsData[i].sales_units;
+          points.push(props.distributorsData[i]);
         }
       }
     }
@@ -61,10 +61,10 @@ export const MapView = (props: MapViewProps) => {
   const preloadHeatMapData = () => {
     const points: Array<HeatMapCoords> = [];
 
-    if (Markers && Array.isArray(Markers)) {
-      for (let i = 0; i < Markers.length; i++) {
+    if (props.distributorsData && Array.isArray(props.distributorsData)) {
+      for (let i = 0; i < props.distributorsData.length; i++) {
         // Maginute based on total sells
-        const data: MapMarker = Markers[i];
+        const data: MapMarker = props.distributorsData[i];
         points.push({ lat: data.latitude, lng: data.longitude, weight: props.focusOnSales ? data.sales_usd : props.focusOnLiters ? data.sales_liters : data.sales_units });
       }
     }
@@ -114,8 +114,8 @@ export const MapView = (props: MapViewProps) => {
             ""
           )}
 
-          {props.showDistricts && MexicoNeighboors && Array.isArray(MexicoNeighboors)
-            ? MexicoNeighboors.map((neigh) => {
+          {props.showDistricts && props.mexicoData && Array.isArray(props.mexicoData)
+            ? props.mexicoData.map((neigh) => {
                 return (
                   <>
                     <Circle
@@ -140,8 +140,15 @@ export const MapView = (props: MapViewProps) => {
               })
             : ""}
 
-          {selectedRegion ? (
-            <InfoWindow headerContent={<h3>{selectedRegion?.name}</h3>} style={{ width: 200, paddingTop: -25 }} disableAutoPan position={{ lat: Number(selectedRegion.latitude) + selectedRegion.radius / 120000, lng: Number(selectedRegion.longitude) }} pixelOffset={[0, -2]}>
+          {selectedRegion && props.showDistricts ? (
+            <InfoWindow
+              onClose={() => setSelectedRegion(null)}
+              headerContent={<h3>{selectedRegion?.name}</h3>}
+              style={{ width: 200, paddingTop: -25 }}
+              disableAutoPan
+              position={{ lat: Number(selectedRegion.latitude) + selectedRegion.radius / 120000, lng: Number(selectedRegion.longitude) }}
+              pixelOffset={[0, -2]}
+            >
               <ul>
                 <li>Total businesses: {availableMarkers.length}</li>
                 <li>Total Sales: $ {Intl.NumberFormat("en-US").format(totalSales)}</li>

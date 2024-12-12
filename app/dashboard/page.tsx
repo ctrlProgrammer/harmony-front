@@ -1,14 +1,7 @@
-"use client";
-
-import { MapView } from "../components/organisms/map/mapView";
+import { DashboardPageComponent } from "../components/pages/dashboard";
 
 export const DashboardPage = () => {
-  return (
-    <div>
-      <h4>Dashboard</h4>
-      <MapView />
-    </div>
-  );
+  return <DashboardPageComponent />;
 };
 
 export default DashboardPage;

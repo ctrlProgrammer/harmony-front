@@ -1,0 +1,55 @@
+.dashBoard {
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 25px;
+}
+
+.dashBoard > div.header {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 5px;
+  padding: 10px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dashBoard > div.header > div:nth-child(1) > p {
+  font-size: 12px;
+}
+
+.dashBoard > div.header > div:nth-child(2) > svg {
+  cursor: pointer;
+  margin: 5px;
+  padding: 3px;
+}
+
+.distribution {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  padding: 15px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.distribution > div.map {
+  position: relative;
+  height: 500px;
+}
+
+.distribution > div.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.distribution > div.header > div:nth-child(1) > p {
+  font-size: 12px;
+}
+
+.distribution > div.header > div:nth-child(2) > svg {
+  margin: 5px;
+  cursor: pointer;
+}

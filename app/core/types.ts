@@ -47,3 +47,26 @@ export interface MapMarker {
   segment_type: string;
   NSE: number;
 }
+
+export enum MapMode {
+  HEAT = "HEAT",
+  NORMAL = "NORMAL",
+}
+
+export interface MapRegion {
+  name: string;
+  latitude: string;
+  longitude: string;
+  radius: number;
+}
+
+export interface MapCoords {
+  lat: number;
+  lng: number;
+}
+
+export interface HeatMapCoords {
+  lat: number;
+  lng: number;
+  weight: number;
+}

@@ -5,19 +5,24 @@ import MexicoNeighboors from "../../../core/data/mexico_ne.json";
 import Markers from "../../../core/data/data_test.json";
 import { Circle } from "./components/circle";
 import { useEffect, useState } from "react";
-import { MapMarker } from "@/app/core/types";
+import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion } from "@/app/core/types";
 import { distanceBetweenPoints, isPointInCircle, milesToM } from "@/app/core/utils/global";
+import Heatmap from "./components/heatmap";
 
-interface MapRegion {
-  name: string;
-  latitude: string;
-  longitude: string;
-  radius: number;
+interface MapViewProps {
+  defaultCenter: MapCoords;
+  center: MapCoords;
+  mapMode: MapMode;
+  onChangeCenter: (coors: MapCoords) => void;
 }
 
-export const MapView = () => {
+export const MapView = (props: MapViewProps) => {
   const [selectedRegion, setSelectedRegion] = useState<MapRegion | null>(null);
   const [availableMarkers, setAvailableMarkers] = useState<MapMarker[]>([]);
+  const [heatMapMarkers, setHeatMapMarkers] = useState<HeatMapCoords[]>([]);
+  const [totalSales, setTotalSales] = useState<number>(0);
+  const [totalUnits, setTotalUnits] = useState<number>(0);
+  const [totalLiters, setTotalLiters] = useState<number>(0);
 
   const searchLocatedMarkers = () => {
     if (!selectedRegion) {
@@ -25,11 +30,10 @@ export const MapView = () => {
     }
 
     const points: Array<MapMarker> = [];
+
     let totalLiters = 0;
     let totalSales = 0;
-    let salesUnits = 0;
-
-    console.log("Try to load possible markers");
+    let totalUnits = 0;
 
     if (Markers && Array.isArray(Markers)) {
       for (let i = 0; i < Markers.length; i++) {
@@ -38,38 +42,82 @@ export const MapView = () => {
         if (distance * 1000 < selectedRegion.radius) {
           totalLiters += Markers[i].sales_liters;
           totalSales += Markers[i].sales_usd;
-          salesUnits += Markers[i].sales_units;
+          totalUnits += Markers[i].sales_units;
           points.push(Markers[i]);
         }
       }
     }
 
     setAvailableMarkers(points);
+    setTotalSales(totalSales);
+    setTotalUnits(totalUnits);
+    setTotalLiters(totalLiters);
+  };
+
+  const preloadHeatMapData = () => {
+    const points: Array<HeatMapCoords> = [];
+
+    if (Markers && Array.isArray(Markers)) {
+      for (let i = 0; i < Markers.length; i++) {
+        // Maginute based on total sells
+        const data: MapMarker = Markers[i];
+        points.push({ lat: data.latitude, lng: data.longitude, weight: data.sales_usd });
+      }
+    }
+
+    setHeatMapMarkers(points);
   };
 
   useEffect(() => {
-    if (selectedRegion) {
-      searchLocatedMarkers();
-    }
+    if (selectedRegion) searchLocatedMarkers();
   }, [selectedRegion]);
+
+  useEffect(() => {
+    if (props.mapMode == MapMode.HEAT) preloadHeatMapData();
+  }, [props.mapMode]);
 
   return (
     <div className={styles.map}>
       <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
-        <Map style={{ width: "500px", height: "500px" }} defaultCenter={{ lat: 19.420069023890793, lng: -99.1380041169563 }} defaultZoom={11} gestureHandling={"greedy"} disableDefaultUI={true}>
-          {availableMarkers && Array.isArray(availableMarkers)
-            ? availableMarkers.map((mapData) => {
-                return <Marker position={{ lat: mapData.latitude, lng: mapData.longitude }} clickable={true} onClick={() => alert("marker was clicked!")} title={"clickable google.maps.Marker"} />;
-              })
-            : ""}
+        <Map
+          style={{ width: "100%", height: "500px" }}
+          defaultCenter={props.center}
+          onCenterChanged={(e) => {
+            const getted = e.map.getCenter();
+
+            if (getted) {
+              const coors = { lat: getted.lat(), lng: getted.lng() } as MapCoords;
+              props.onChangeCenter(coors);
+            }
+          }}
+          center={props.center}
+          defaultZoom={11}
+          gestureHandling={"greedy"}
+          disableDefaultUI={true}
+        >
+          {props.mapMode == MapMode.HEAT ? (
+            heatMapMarkers && Array.isArray(heatMapMarkers) ? (
+              <Heatmap points={heatMapMarkers} opacity={0.6} radius={80} />
+            ) : (
+              ""
+            )
+          ) : availableMarkers && Array.isArray(availableMarkers) ? (
+            availableMarkers.map((mapData, index) => {
+              return <Marker position={{ lat: mapData.latitude, lng: mapData.longitude }} clickable={true} onClick={() => alert("marker was clicked!")} title={"clickable google.maps.Marker"} />;
+            })
+          ) : (
+            ""
+          )}
           {MexicoNeighboors && Array.isArray(MexicoNeighboors)
             ? MexicoNeighboors.map((neigh) => {
                 return (
                   <>
                     <Circle
-                      onMouseOver={(data) => {}}
+                      key={neigh.name}
+                      onMouseOver={() => {}}
                       onClick={() => {
                         setSelectedRegion(neigh);
+                        // props.onChangeCenter({ lat: Number(neigh.latitude), lng: Number(neigh.longitude) });
                       }}
                       radius={neigh.radius}
                       center={{ lat: Number(neigh.latitude), lng: Number(neigh.longitude) }}
@@ -87,12 +135,12 @@ export const MapView = () => {
             : ""}
 
           {selectedRegion ? (
-            <InfoWindow position={{ lat: Number(selectedRegion.latitude), lng: Number(selectedRegion.longitude) }} pixelOffset={[0, -2]}>
-              <h4>{selectedRegion?.name}</h4>
+            <InfoWindow headerContent={<h3>{selectedRegion?.name}</h3>} style={{ width: 200, paddingTop: -25 }} disableAutoPan position={{ lat: Number(selectedRegion.latitude) + selectedRegion.radius / 120000, lng: Number(selectedRegion.longitude) }} pixelOffset={[0, -2]}>
               <ul>
                 <li>Total businesses: {availableMarkers.length}</li>
-                <li>Total Sales: {availableMarkers.length}</li>
-                <li>Total Liters: {availableMarkers.length}</li>
+                <li>Total Sales: $ {Intl.NumberFormat("en-US").format(totalSales)}</li>
+                <li>Total Liters: {Intl.NumberFormat("en-US").format(totalLiters)}</li>
+                <li>Total Units: {Intl.NumberFormat("en-US").format(totalUnits)}</li>
               </ul>
             </InfoWindow>
           ) : (

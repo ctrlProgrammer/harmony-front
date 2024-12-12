@@ -145,7 +145,6 @@ export const DashboardPageComponent = () => {
               max={maxValue}
             />
             <small>We filter by different attributes to get wholesalers, distributors or subdistributors (It is not the best implementation but for now it is simple)</small>
-            <button>Load map</button>
           </div>
         </div>
       </div>

@@ -28,6 +28,7 @@ export const MapView = (props: MapViewProps) => {
   const [totalSales, setTotalSales] = useState<number>(0);
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [totalLiters, setTotalLiters] = useState<number>(0);
+  const [loadMap, setLoadMap] = useState<boolean>(true);
 
   const searchLocatedMarkers = () => {
     const points: Array<MapMarker> = [];
@@ -64,12 +65,14 @@ export const MapView = (props: MapViewProps) => {
     setTotalSales(totalSales);
     setTotalUnits(totalUnits);
     setTotalLiters(totalLiters);
+    setLoadMap(false);
   };
 
+  useEffect(() => setLoadMap(true), [selectedRegion, props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits, props.totalFilter]);
+
   useEffect(() => {
-    console.log("redefine");
-    searchLocatedMarkers();
-  }, [selectedRegion, props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits, props.totalFilter]);
+    if (loadMap) searchLocatedMarkers();
+  }, [loadMap]);
 
   return (
     <div className={styles.map}>
@@ -90,7 +93,7 @@ export const MapView = (props: MapViewProps) => {
           gestureHandling={"greedy"}
           disableDefaultUI={true}
         >
-          {props.mapMode == MapMode.HEAT ? (
+          {props.mapMode == MapMode.HEAT && !loadMap ? (
             heatMapMarkers && Array.isArray(heatMapMarkers) ? (
               <Heatmap points={heatMapMarkers} opacity={0.6} radius={80} />
             ) : (

@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Álvaro Obregón",
+    "latitude": "19.358667",
+    "longitude": "-99.213292",
+    "radius": 3000
+  },
+  {
+    "name": "Azcapotzalco",
+    "latitude": "19.494650",
+    "longitude": "-99.188732",
+    "radius": 4000
+  },
+  {
+    "name": "Benito Juárez",
+    "latitude": "19.39",
+    "longitude": "-99.162864",
+    "radius": 3000
+  },
+  {
+    "name": "Coyoacán",
+    "latitude": "19.339819",
+    "longitude": "-99.161323",
+    "radius": 2500
+  },
+  {
+    "name": "Pueblo Culhuacan",
+    "latitude": "19.326819",
+    "longitude": "-99.101323",
+    "radius": 3500
+  },
+  {
+    "name": "Cuauhtémoc",
+    "latitude": "19.440057",
+    "longitude": "-99.144528",
+    "radius": 3000
+  },
+  {
+    "name": "Gustavo A. Madero",
+    "latitude": "19.501926",
+    "longitude": "-99.103826",
+    "radius": 5000
+  },
+  {
+    "name": "Iztacalco",
+    "latitude": "19.385729",
+    "longitude": "-99.105562",
+    "radius": 3000
+  },
+  {
+    "name": "Iztapalapa",
+    "latitude": "19.389862",
+    "longitude": "-99.027187",
+    "radius": 5000
+  },
+  {
+    "name": "La Magdalena Contreras",
+    "latitude": "19.307723",
+    "longitude": "-99.227421",
+    "radius": 3000
+  },
+  {
+    "name": "Miguel Hidalgo",
+    "latitude": "19.431897",
+    "longitude": "-99.201286",
+    "radius": 3000
+  },
+  {
+    "name": "Tlalpan",
+    "latitude": "19.275386",
+    "longitude": "-99.160703",
+    "radius": 5000
+  },
+  {
+    "name": "Venustiano Carranza",
+    "latitude": "19.434671",
+    "longitude": "-99.089543",
+    "radius": 2600
+  }
+]

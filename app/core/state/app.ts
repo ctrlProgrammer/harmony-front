@@ -50,6 +50,14 @@ export const useAppStore = create<AppState>()(
         set({ loadedData: true });
       },
     }),
-    { name: "HARMONY_APP_STATE", onRehydrateStorage(state) {} }
+    {
+      name: "HARMONY_APP_STATE",
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) console.log("an error happened during hydration", error);
+          else if (state) state?.preloadSession();
+        };
+      },
+    }
   )
 );

@@ -53,6 +53,13 @@ export enum MapMode {
   NORMAL = "NORMAL",
 }
 
+export enum MapModeIteration {
+  SALES = "SALES",
+  LITERS = "LITERS",
+  UNITS = "UNITS",
+  DISTRIBUTORS = "DISTRIBUTORS",
+}
+
 export interface MapRegion {
   name: string;
   latitude: string;

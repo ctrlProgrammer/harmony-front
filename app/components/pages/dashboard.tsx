@@ -8,14 +8,23 @@ import { faChartBar, faMap } from "@fortawesome/free-regular-svg-icons";
 import { faJediOrder } from "@fortawesome/free-brands-svg-icons";
 import { faAlignCenter, faFire, faMapLocation, faMapMarked, faMapPin, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faMapLocationDot } from "@fortawesome/free-solid-svg-icons/faMapLocationDot";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapMode } from "@/app/core/types";
+
+import Switch from "@mui/material/Switch";
+import { FormControlLabel } from "@mui/material";
 
 const DEFAULT_CENTER = { lat: 19.431727519606884, lng: -99.1347848053937 };
 
 export const DashboardPageComponent = () => {
   const [center, setCenter] = useState(DEFAULT_CENTER);
-  const [mapMode, setMapMode] = useState<MapMode>(MapMode.NORMAL);
+
+  // Configuration
+  const [configDistricts, setDistricts] = useState(true);
+  const [configHeatMap, setHeatMap] = useState(false);
+  const [configFocusOnSales, setFocusOnSales] = useState(true);
+  const [configFocusOnLiters, setFocusOnLiters] = useState(false);
+  const [configFocusOnUnits, setFocusOnUnits] = useState(false);
 
   return (
     <div className={styles.dashBoard}>
@@ -38,11 +47,62 @@ export const DashboardPageComponent = () => {
           </div>
           <div>
             <FontAwesomeIcon onClick={() => setCenter(DEFAULT_CENTER)} icon={faMapPin} />
-            <FontAwesomeIcon onClick={() => setMapMode(mapMode == MapMode.HEAT ? MapMode.NORMAL : MapMode.HEAT)} icon={faFire} />
           </div>
         </div>
         <div className={styles.map}>
-          <MapView mapMode={mapMode} center={center} onChangeCenter={(coords) => setCenter(coords)} defaultCenter={center} />
+          <MapView focusOnSales={configFocusOnSales} focusOnLiters={configFocusOnLiters} focusOnUnits={configFocusOnUnits} showDistricts={configDistricts} mapMode={configHeatMap ? MapMode.HEAT : MapMode.NORMAL} center={center} onChangeCenter={(coords) => setCenter(coords)} defaultCenter={center} />
+        </div>
+        <div className={styles.mapConfig}>
+          <h4>Configuration</h4>
+          <div>
+            <FormControlLabel control={<Switch size="small" checked={configDistricts} onChange={(e) => setDistricts(e.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Show districts" />
+            <FormControlLabel control={<Switch size="small" checked={configHeatMap} onChange={(e) => setHeatMap(e.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Heat map" />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configFocusOnSales}
+                  onChange={(e) => {
+                    setFocusOnSales(true);
+                    setFocusOnLiters(false);
+                    setFocusOnUnits(false);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Focus on Sales"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configFocusOnUnits}
+                  onChange={(e) => {
+                    setFocusOnSales(false);
+                    setFocusOnLiters(false);
+                    setFocusOnUnits(true);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Focus on units"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configFocusOnLiters}
+                  onChange={(e) => {
+                    setFocusOnSales(false);
+                    setFocusOnLiters(true);
+                    setFocusOnUnits(false);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Focus on liters"
+            />
+          </div>
         </div>
       </div>
     </div>

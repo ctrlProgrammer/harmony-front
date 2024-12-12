@@ -53,3 +53,11 @@
   margin: 5px;
   cursor: pointer;
 }
+
+.mapConfig {
+  margin-top: 20px;
+}
+
+.mapConfig > div {
+  padding: 10px 15px;
+}

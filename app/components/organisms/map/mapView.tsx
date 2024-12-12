@@ -13,6 +13,10 @@ interface MapViewProps {
   defaultCenter: MapCoords;
   center: MapCoords;
   mapMode: MapMode;
+  showDistricts: boolean;
+  focusOnSales: boolean;
+  focusOnLiters: boolean;
+  focusOnUnits: boolean;
   onChangeCenter: (coors: MapCoords) => void;
 }
 
@@ -61,10 +65,11 @@ export const MapView = (props: MapViewProps) => {
       for (let i = 0; i < Markers.length; i++) {
         // Maginute based on total sells
         const data: MapMarker = Markers[i];
-        points.push({ lat: data.latitude, lng: data.longitude, weight: data.sales_usd });
+        points.push({ lat: data.latitude, lng: data.longitude, weight: props.focusOnSales ? data.sales_usd : props.focusOnLiters ? data.sales_liters : data.sales_units });
       }
     }
 
+    console.log(points);
     setHeatMapMarkers(points);
   };
 
@@ -74,7 +79,7 @@ export const MapView = (props: MapViewProps) => {
 
   useEffect(() => {
     if (props.mapMode == MapMode.HEAT) preloadHeatMapData();
-  }, [props.mapMode]);
+  }, [props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits]);
 
   return (
     <div className={styles.map}>
@@ -108,7 +113,8 @@ export const MapView = (props: MapViewProps) => {
           ) : (
             ""
           )}
-          {MexicoNeighboors && Array.isArray(MexicoNeighboors)
+
+          {props.showDistricts && MexicoNeighboors && Array.isArray(MexicoNeighboors)
             ? MexicoNeighboors.map((neigh) => {
                 return (
                   <>

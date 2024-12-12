@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap");
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -26,8 +28,11 @@ body {
 
 * {
   box-sizing: border-box;
+  font-family: "Roboto Condensed", serif;
   padding: 0;
+  font-style: normal;
   margin: 0;
+  color: black;
 }
 
 a {
@@ -39,4 +44,41 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: black;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+input,
+select,
+textarea {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: black;
+  height: 40px;
+  width: 100%;
+  max-width: 400px;
+  padding: 5px;
+}
+
+button {
+  background: black;
+  color: white;
+  text-align: center;
+  height: 35px;
+  width: 100%;
+  max-width: 400px;
+  border: 0;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin: 5px 0;
 }

@@ -6,15 +6,18 @@ import { useEffect } from "react";
 
 export const SessionValidation = () => {
   const router = useRouter();
-  const { sessionCode, user, validateSession } = useAppStore();
+  const { sessionCode, user, loadedData, validateSession } = useAppStore();
 
   useEffect(() => {
-    if (sessionCode && user) {
-      validateSession(user.email, sessionCode).then((success) => {
-        if (!success) router.push("/");
-      });
-    } else router.push("/");
-  }, []);
+    if (loadedData) {
+      if (sessionCode && user) {
+        validateSession(user.email, sessionCode).then((success) => {
+          console.log("Validated session");
+          if (!success) router.push("/");
+        });
+      } else router.push("/");
+    }
+  }, [loadedData]);
 
   return <div></div>;
 };

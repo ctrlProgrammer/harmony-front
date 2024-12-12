@@ -8,6 +8,7 @@ interface AppState {
   user: User | null;
   sessionCode: string | null;
   login: (login: UserLogin) => Promise<boolean>;
+  validateSession: (email: string, sessionCode: string) => Promise<boolean>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -19,14 +20,26 @@ export const useAppStore = create<AppState>()(
         login: async (login) => {
           return new Promise((res) => {
             APIUtils.Login(login).then((data) => {
-              if (!data || data.error) {
+              if (!data || data.error || !data.data) {
                 toast.error(data.error);
                 res(false);
-                return;
               }
 
-              set({ sessionCode: data.data });
+              set({ sessionCode: data.data.session, user: data.data.user });
               toast.success("Success");
+              res(true);
+            });
+          });
+        },
+        validateSession: async (email, sessionCode) => {
+          return new Promise((res) => {
+            APIUtils.ValidateSession({ fromUser: email, sessionCode }).then((data) => {
+              if (!data || data.error) {
+                toast.error(data.error);
+                set({ sessionCode: null, user: null });
+                res(false);
+              }
+
               res(true);
             });
           });

@@ -9,3 +9,8 @@ export interface UserLogin {
   email: string;
   password: string;
 }
+
+export interface ValidateSession {
+  fromUser: string;
+  sessionCode: string;
+}

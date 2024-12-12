@@ -1,4 +1,4 @@
-import { User, UserLogin } from "../types";
+import { User, UserLogin, ValidateSession } from "../types";
 
 export class APIUtils {
   static readonly HOST = "http://localhost:9101";
@@ -34,5 +34,9 @@ export class APIUtils {
 
   static async Login(user: UserLogin) {
     return APIUtils.POST("/login", user);
+  }
+
+  static async ValidateSession(validate: ValidateSession) {
+    return APIUtils.POST("/validate-session", validate);
   }
 }

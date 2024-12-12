@@ -17,6 +17,7 @@ interface MapViewProps {
   focusOnUnits: boolean;
   mexicoData: MapRegion[];
   distributorsData: MapMarker[];
+  totalFilter: Array<number>;
   onChangeCenter: (coors: MapCoords) => void;
 }
 
@@ -29,11 +30,8 @@ export const MapView = (props: MapViewProps) => {
   const [totalLiters, setTotalLiters] = useState<number>(0);
 
   const searchLocatedMarkers = () => {
-    if (!selectedRegion) {
-      return;
-    }
-
     const points: Array<MapMarker> = [];
+    const heatMapPoints: Array<HeatMapCoords> = [];
 
     let totalLiters = 0;
     let totalSales = 0;
@@ -41,45 +39,37 @@ export const MapView = (props: MapViewProps) => {
 
     if (props.distributorsData && Array.isArray(props.distributorsData)) {
       for (let i = 0; i < props.distributorsData.length; i++) {
-        const distance = distanceBetweenPoints(Number(selectedRegion.latitude), Number(selectedRegion.longitude), props.distributorsData[i].latitude, props.distributorsData[i].longitude);
+        const data: MapMarker = props.distributorsData[i];
+        const representativeData = props.focusOnSales ? data.sales_usd : props.focusOnLiters ? data.sales_liters : data.sales_units;
 
-        if (distance * 1000 < selectedRegion.radius) {
-          totalLiters += props.distributorsData[i].sales_liters;
-          totalSales += props.distributorsData[i].sales_usd;
-          totalUnits += props.distributorsData[i].sales_units;
-          points.push(props.distributorsData[i]);
+        if (representativeData < props.totalFilter[1] && representativeData > props.totalFilter[0]) {
+          if (selectedRegion) {
+            const distance = distanceBetweenPoints(Number(selectedRegion.latitude), Number(selectedRegion.longitude), props.distributorsData[i].latitude, props.distributorsData[i].longitude);
+
+            if (distance * 1000 < selectedRegion.radius) {
+              totalLiters += data.sales_liters;
+              totalSales += data.sales_usd;
+              totalUnits += data.sales_units;
+              points.push(data);
+            }
+          }
+
+          heatMapPoints.push({ lat: data.latitude, lng: data.longitude, weight: representativeData });
         }
       }
     }
 
+    setHeatMapMarkers(heatMapPoints);
     setAvailableMarkers(points);
     setTotalSales(totalSales);
     setTotalUnits(totalUnits);
     setTotalLiters(totalLiters);
   };
 
-  const preloadHeatMapData = () => {
-    const points: Array<HeatMapCoords> = [];
-
-    if (props.distributorsData && Array.isArray(props.distributorsData)) {
-      for (let i = 0; i < props.distributorsData.length; i++) {
-        // Maginute based on total sells
-        const data: MapMarker = props.distributorsData[i];
-        points.push({ lat: data.latitude, lng: data.longitude, weight: props.focusOnSales ? data.sales_usd : props.focusOnLiters ? data.sales_liters : data.sales_units });
-      }
-    }
-
-    console.log(points);
-    setHeatMapMarkers(points);
-  };
-
   useEffect(() => {
-    if (selectedRegion) searchLocatedMarkers();
-  }, [selectedRegion]);
-
-  useEffect(() => {
-    if (props.mapMode == MapMode.HEAT) preloadHeatMapData();
-  }, [props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits]);
+    console.log("redefine");
+    searchLocatedMarkers();
+  }, [selectedRegion, props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits, props.totalFilter]);
 
   return (
     <div className={styles.map}>

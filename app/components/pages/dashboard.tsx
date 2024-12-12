@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { MapMode, MapRegion } from "@/app/core/types";
 
 import Switch from "@mui/material/Switch";
-import { FormControlLabel } from "@mui/material";
+import { FormControlLabel, Slider } from "@mui/material";
 
 import MexicoNeighboors from "../../core/data/mexico_ne.json";
 import Markers from "../../core/data/data_test.json";
@@ -30,6 +30,10 @@ export const DashboardPageComponent = () => {
   const [configFocusOnSales, setFocusOnSales] = useState(true);
   const [configFocusOnLiters, setFocusOnLiters] = useState(false);
   const [configFocusOnUnits, setFocusOnUnits] = useState(false);
+
+  const maxValue = Math.max(...(Markers && Array.isArray(Markers) ? Markers : []).map((maker) => (configFocusOnSales ? maker.sales_usd : configFocusOnLiters ? maker.sales_liters : maker.sales_units)));
+
+  const [totalFilter, setTotalFilter] = useState<Array<number>>([0, maxValue]);
 
   return (
     <div className={styles.dashBoard}>
@@ -55,18 +59,23 @@ export const DashboardPageComponent = () => {
           </div>
         </div>
         <div className={styles.map}>
-          <MapView
-            distributorsData={Markers}
-            mexicoData={MexicoNeighboors}
-            focusOnSales={configFocusOnSales}
-            focusOnLiters={configFocusOnLiters}
-            focusOnUnits={configFocusOnUnits}
-            showDistricts={configDistricts}
-            mapMode={configHeatMap ? MapMode.HEAT : MapMode.NORMAL}
-            center={center}
-            onChangeCenter={(coords) => setCenter(coords)}
-            defaultCenter={center}
-          />
+          {Markers && Array.isArray(Markers) ? (
+            <MapView
+              totalFilter={totalFilter}
+              distributorsData={Markers}
+              mexicoData={MexicoNeighboors}
+              focusOnSales={configFocusOnSales}
+              focusOnLiters={configFocusOnLiters}
+              focusOnUnits={configFocusOnUnits}
+              showDistricts={configDistricts}
+              mapMode={configHeatMap ? MapMode.HEAT : MapMode.NORMAL}
+              center={center}
+              onChangeCenter={(coords) => setCenter(coords)}
+              defaultCenter={center}
+            />
+          ) : (
+            ""
+          )}
         </div>
         <div className={styles.mapConfig}>
           <h4>Configuration</h4>
@@ -118,6 +127,25 @@ export const DashboardPageComponent = () => {
               }
               label="Focus on liters"
             />
+          </div>
+          <div className={styles.filter}>
+            <h4>Filter {configFocusOnSales ? "By Sales (USD)" : configFocusOnLiters ? "By liters" : "By Units"}</h4>
+            <Slider
+              aria-label="Totals"
+              value={totalFilter}
+              onChange={(e, value) => {
+                setTotalFilter(value as Array<number>);
+              }}
+              defaultValue={maxValue}
+              getAriaValueText={(value: number) => `${Intl.NumberFormat().format(value)}`}
+              valueLabelDisplay="auto"
+              step={maxValue / 20}
+              marks
+              min={0}
+              max={maxValue}
+            />
+            <small>We filter by different attributes to get wholesalers, distributors or subdistributors (It is not the best implementation but for now it is simple)</small>
+            <button>Load map</button>
           </div>
         </div>
       </div>

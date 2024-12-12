@@ -66,3 +66,7 @@
 .mapConfig > div > label > span {
   font-size: 12px;
 }
+
+.filter > small {
+  font-size: 11px;
+}

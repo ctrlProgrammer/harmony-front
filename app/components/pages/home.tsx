@@ -4,10 +4,11 @@ import Image from "next/image";
 import styles from "./home.module.css";
 import { useState } from "react";
 import { APIUtils } from "@/app/core/utils/api";
-import { User } from "@/app/core/types";
+import { User, UserLogin } from "@/app/core/types";
 import { validateEmail } from "@/app/core/utils/global";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAppStore } from "@/app/core/state/app";
 
 export const HomePage = () => {
   const router = useRouter();
@@ -18,8 +19,9 @@ export const HomePage = () => {
   const [role, setRole] = useState("ADMIN");
   const [create, setCreate] = useState(false);
 
+  const { login } = useAppStore();
+
   const join = () => {
-    console.log(email);
     if (!validateEmail(email)) {
       toast.error("Invalid email");
       return;
@@ -30,14 +32,8 @@ export const HomePage = () => {
       return;
     }
 
-    APIUtils.Login({ email, password } as User).then((data) => {
-      if (!data || data.error) {
-        toast.error(data.error);
-        return;
-      }
-
-      toast.success("Success");
-      router.push("/dashboard");
+    login({ email, password } as UserLogin).then((success) => {
+      if (success) router.push("/dashboard");
     });
   };
 

@@ -173,9 +173,47 @@ export const DashboardPageComponent = () => {
         <div className={styles.mapConfig}>
           <h4>Configuration</h4>
           <div>
-            <FormControlLabel control={<Switch size="small" checked={configMarkers} onChange={(e) => setShowMarkers(e.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Show seller markers" />
-            <FormControlLabel control={<Switch size="small" checked={configDistricts} onChange={(e) => setDistricts(e.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Show districts" />
-            <FormControlLabel control={<Switch size="small" checked={configHeatMap} onChange={(e) => setHeatMap(e.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Heat map" />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configMarkers}
+                  onChange={(e) => {
+                    setShowMarkers(e.target.checked);
+                    setHeatMap(false);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Show seller markers"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configDistricts}
+                  onChange={(e) => {
+                    setDistricts(e.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Show districts"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={configHeatMap}
+                  onChange={(e) => {
+                    setHeatMap(e.target.checked);
+                    setShowMarkers(false);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Heat map"
+            />
             <FormControlLabel
               control={
                 <Switch

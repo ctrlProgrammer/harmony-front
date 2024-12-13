@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Downtown Miami",
+    "latitude": "25.7741728",
+    "longitude": "-80.19362",
+    "radius": 3000
+  },
+  {
+    "name": "Brickell",
+    "latitude": "25.761307",
+    "longitude": "-80.192679",
+    "radius": 2000
+  },
+  {
+    "name": "Little Havana",
+    "latitude": "25.765309",
+    "longitude": "-80.219252",
+    "radius": 4000
+  },
+  {
+    "name": "Wynwood",
+    "latitude": "25.801378",
+    "longitude": "-80.199579",
+    "radius": 2000
+  },
+  {
+    "name": "Midtown Miami",
+    "latitude": "25.813673",
+    "longitude": "-80.192007",
+    "radius": 2000
+  },
+  {
+    "name": "Design District",
+    "latitude": "25.817201",
+    "longitude": "-80.191788",
+    "radius": 1500
+  },
+  {
+    "name": "Overtown",
+    "latitude": "25.785869",
+    "longitude": "-80.207301",
+    "radius": 3000
+  },
+  {
+    "name": "Coconut Grove",
+    "latitude": "25.727543",
+    "longitude": "-80.239724",
+    "radius": 5000
+  },
+  {
+    "name": "Coral Gables",
+    "latitude": "25.721490",
+    "longitude": "-80.268383",
+    "radius": 7000
+  },
+  {
+    "name": "Allapattah",
+    "latitude": "25.815115",
+    "longitude": "-80.221345",
+    "radius": 4000
+  },
+  {
+    "name": "Little Haiti",
+    "latitude": "25.835836",
+    "longitude": "-80.197389",
+    "radius": 4000
+  },
+  {
+    "name": "Edgewater",
+    "latitude": "25.801820",
+    "longitude": "-80.187973",
+    "radius": 2000
+  },
+  {
+    "name": "Flagami",
+    "latitude": "25.764904",
+    "longitude": "-80.304145",
+    "radius": 5000
+  },
+  {
+    "name": "Liberty City",
+    "latitude": "25.841431",
+    "longitude": "-80.230791",
+    "radius": 6000
+  },
+  {
+    "name": "South Beach",
+    "latitude": "25.790654",
+    "longitude": "-80.130045",
+    "radius": 4000
+  },
+  {
+    "name": "Key Biscayne",
+    "latitude": "25.698685",
+    "longitude": "-80.162678",
+    "radius": 8000
+  },
+  {
+    "name": "Virginia Key",
+    "latitude": "25.739505",
+    "longitude": "-80.160517",
+    "radius": 6000
+  },
+  {
+    "name": "Brownsville",
+    "latitude": "25.821215",
+    "longitude": "-80.241581",
+    "radius": 3000
+  },
+  {
+    "name": "Upper East Side",
+    "latitude": "25.852727",
+    "longitude": "-80.183114",
+    "radius": 4000
+  },
+  {
+    "name": "Westchester",
+    "latitude": "25.745931",
+    "longitude": "-80.344500",
+    "radius": 6000
+  }
+]

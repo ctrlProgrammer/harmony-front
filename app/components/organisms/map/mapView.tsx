@@ -2,7 +2,7 @@ import { APIProvider, Map, Marker, AdvancedMarker, InfoWindow } from "@vis.gl/re
 import styles from "./mapView.module.css";
 
 import { Circle } from "./components/circle";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
 import { distanceBetweenPoints, isPointInCircle, milesToM } from "@/app/core/utils/global";
 import Heatmap from "./components/heatmap";
@@ -18,11 +18,13 @@ interface MapViewProps {
   mexicoData: MapRegion[];
   distributorsData: MapMarker[];
   totalFilter: Array<number>;
+  enableSellerMark: boolean;
   onChangeRegion: (regionData: RegionData) => void;
   onChangeCenter: (coors: MapCoords) => void;
 }
 
 export const MapView = (props: MapViewProps) => {
+  const [coords, setCoords] = useState(props.center);
   const [selectedRegion, setSelectedRegion] = useState<MapRegion | null>(null);
   const [heatMapMarkers, setHeatMapMarkers] = useState<HeatMapCoords[]>([]);
   const [regionData, setRegionData] = useState<RegionData | null>(null);
@@ -73,40 +75,29 @@ export const MapView = (props: MapViewProps) => {
     setLoadMap(false);
   };
 
-  useEffect(() => setLoadMap(true), [selectedRegion, props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits, props.totalFilter]);
+  useEffect(() => {
+    setLoadMap(true);
+  }, [selectedRegion, props.mapMode, props.focusOnLiters, props.focusOnSales, props.focusOnUnits, props.totalFilter]);
 
   useEffect(() => {
     if (loadMap) searchLocatedMarkers();
   }, [loadMap]);
 
+  useEffect(() => setCoords(props.center), [props.center]);
+
   return (
     <div className={styles.map}>
       <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
-        <Map
-          style={{ width: "100%", height: "500px" }}
-          defaultCenter={props.center}
-          onCenterChanged={(e) => {
-            const getted = e.map.getCenter();
-
-            if (getted) {
-              const coors = { lat: getted.lat(), lng: getted.lng() } as MapCoords;
-              props.onChangeCenter(coors);
-            }
-          }}
-          center={props.center}
-          defaultZoom={11}
-          gestureHandling={"greedy"}
-          disableDefaultUI={true}
-        >
+        <Map style={{ width: "100%", height: "500px" }} defaultCenter={props.center} defaultZoom={11} gestureHandling={"greedy"} disableDefaultUI={true}>
           {props.mapMode == MapMode.HEAT && !loadMap ? (
             heatMapMarkers && Array.isArray(heatMapMarkers) ? (
-              <Heatmap points={heatMapMarkers} opacity={0.6} radius={80} />
+              <Heatmap points={heatMapMarkers} opacity={0.6} radius={20} />
             ) : (
               ""
             )
-          ) : regionData?.distributors && Array.isArray(regionData?.distributors) ? (
+          ) : !loadMap && regionData?.distributors && Array.isArray(regionData?.distributors) && props.enableSellerMark ? (
             regionData?.distributors.map((mapData, index) => {
-              return <Marker position={{ lat: mapData.latitude, lng: mapData.longitude }} clickable={true} onClick={() => alert("marker was clicked!")} title={"clickable google.maps.Marker"} />;
+              return <Marker key={index + "_" + mapData.vendor_name + "_" + mapData.pdv} position={{ lat: mapData.latitude, lng: mapData.longitude }} clickable={false} />;
             })
           ) : (
             ""
@@ -119,15 +110,12 @@ export const MapView = (props: MapViewProps) => {
                     <Circle
                       key={neigh.name}
                       onMouseOver={() => {}}
-                      onClick={() => {
-                        setSelectedRegion(neigh);
-                        // props.onChangeCenter({ lat: Number(neigh.latitude), lng: Number(neigh.longitude) });
-                      }}
+                      onClick={() => setSelectedRegion(neigh)}
                       radius={neigh.radius}
                       center={{ lat: Number(neigh.latitude), lng: Number(neigh.longitude) }}
                       strokeColor={"#0c4cb3"}
                       strokeOpacity={1}
-                      strokeWeight={3}
+                      strokeWeight={1}
                       fillColor={"#3b82f6"}
                       fillOpacity={0.3}
                       editable={false}

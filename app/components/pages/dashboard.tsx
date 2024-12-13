@@ -19,9 +19,10 @@ import BogotaNeighboors from "../../core/data/city_bogota_ne.json";
 import MiamiNeighboors from "../../core/data/city_miami_ne.json";
 import Markers from "../../core/data/data.json";
 import Propmts from "../../core/data/posible_prompts.json";
-import { categorizeSellers } from "@/app/core/utils/global";
+import { categorizeSellers, generateRandomSellerHistoricalData } from "@/app/core/utils/global";
 import { TreeChart } from "../organisms/charts/tree";
 import { useAppStore } from "@/app/core/state/app";
+import { BarChartComponent } from "../organisms/charts/bar";
 
 const DEFAULT_DATA_BY_CITY = {
   BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: BogotaNeighboors, city: "Bogotá" },
@@ -416,7 +417,25 @@ export const DashboardPageComponent = () => {
                     </div>
                   </>
                 ) : (
-                  ""
+                  <>
+                    <h4>Seller - {selectedDistributor.vendor_name}</h4>
+                    <div className={styles.dist}>
+                      <ul>
+                        <li>Country: {selectedDistributor.country}</li>
+                        <li>City: {selectedDistributor.city}</li>
+                        <li>Address: {selectedDistributor.address}</li>
+                        <li>Product: {selectedDistributor.product_name}</li>
+                        <li>Brand: {selectedDistributor.brand}</li>
+                        <li>Sales USD: $ {Intl.NumberFormat().format(selectedDistributor.sales_usd)}</li>
+                        <li>Sales Liters: {selectedDistributor.sales_liters}</li>
+                        <li>Sales Units: {selectedDistributor.sales_units}</li>
+                      </ul>
+
+                      <div>
+                        <BarChartComponent data={generateRandomSellerHistoricalData()} />
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             ) : (

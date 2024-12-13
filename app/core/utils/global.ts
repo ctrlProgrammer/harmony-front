@@ -1,4 +1,4 @@
-import { MapMarker } from "../types";
+import { MapMarker, SellerHistoricalData } from "../types";
 
 export const validateEmail = (email: string) => {
   return String(email)
@@ -55,4 +55,14 @@ export const categorizeSellers = (data: MapMarker[]) => {
   const mediumPerformers = data.slice(topCount, topCount + mediumCount);
   const lowPerformers = data.slice(topCount + mediumCount);
   return { topPerformers, mediumPerformers, lowPerformers };
+};
+
+export const generateRandomSellerHistoricalData = (): SellerHistoricalData[] => {
+  const data: SellerHistoricalData[] = [];
+  for (let i = 0; i < 12; i++) data.push({ month: i + 1, sales: randomNumber(1000, 50000) });
+  return data;
+};
+
+export const randomNumber = (min: number, max: number) => {
+  return Math.random() * (max - min) + min;
 };

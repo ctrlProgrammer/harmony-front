@@ -99,3 +99,8 @@ export enum City {
   MEXICO_CITY = "MEXICO_CITY",
   MIAMI = "MIAMI",
 }
+
+export interface SellerHistoricalData {
+  month: number;
+  sales: number;
+}

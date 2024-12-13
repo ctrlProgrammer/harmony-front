@@ -9,14 +9,14 @@ import { faJediOrder } from "@fortawesome/free-brands-svg-icons";
 import { faAlignCenter, faFire, faMapLocation, faMapMarked, faMapPin, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faMapLocationDot } from "@fortawesome/free-solid-svg-icons/faMapLocationDot";
 import { useEffect, useState } from "react";
-import { City, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
+import { City, MapMarker, MapMode, MapRegion, RegionData } from "@/core/types";
 
 import Switch from "@mui/material/Switch";
 import { FormControlLabel, Slider } from "@mui/material";
 
-import { categorizeSellers, generateRandomSellerHistoricalData } from "@/app/core/utils/global";
+import { categorizeSellers, generateRandomSellerHistoricalData } from "@/core/utils/global";
 import { TreeChart } from "../organisms/charts/tree";
-import { useAppStore } from "@/app/core/state/app";
+import { useAppStore } from "@/core/state/app";
 import { BarChartComponent } from "../organisms/charts/bar";
 import Propmts from "../../core/data/posible_prompts.json";
 import { Header, InternalHeader } from "../organisms/content/header";

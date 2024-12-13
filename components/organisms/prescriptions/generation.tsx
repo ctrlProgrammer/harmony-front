@@ -1,6 +1,6 @@
-import { useAppStore } from "@/app/core/state/app";
+import { useAppStore } from "@/core/state/app";
 import styles from "./generation.module.css";
-import { City } from "@/app/core/types";
+import { City } from "@/core/types";
 import { InternalHeader } from "../content/header";
 
 interface PrescriptionGenerationProps {

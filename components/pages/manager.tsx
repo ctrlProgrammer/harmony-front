@@ -8,8 +8,8 @@ import { faChartBar, faEdit } from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 
 import DataTable from "react-data-table-component";
-import { PrescriptionManagement } from "@/app/core/types";
-import { useAppStore } from "@/app/core/state/app";
+import { PrescriptionManagement } from "@/core/types";
+import { useAppStore } from "@/core/state/app";
 import { useState } from "react";
 import { LinearProgress } from "@mui/material";
 import { GeneratePrescriptions } from "../organisms/prescriptions/generation";

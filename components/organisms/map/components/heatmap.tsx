@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { FeatureCollection, Point, GeoJsonProperties } from "geojson";
-import { HeatMapCoords } from "@/app/core/types";
+import { HeatMapCoords } from "@/core/types";
 
 type HeatmapProps = {
   points: HeatMapCoords[];

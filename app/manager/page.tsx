@@ -1,7 +1,13 @@
-import { ManagerPageComponent } from "@/app/components/pages/manager";
+"use client";
 
-export const ManagerPage = () => {
-  return <ManagerPageComponent />;
-};
+import { ManagerPageComponent } from "@/components/pages/manager";
+import { SessionValidation } from "../../components/organisms/sessionValidation";
 
-export default ManagerPage;
+export default function Manager() {
+  return (
+    <>
+      <SessionValidation />
+      <ManagerPageComponent />
+    </>
+  );
+}

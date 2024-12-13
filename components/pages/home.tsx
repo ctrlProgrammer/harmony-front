@@ -3,12 +3,12 @@
 import Image from "next/image";
 import styles from "./home.module.css";
 import { useState } from "react";
-import { APIUtils } from "@/app/core/utils/api";
-import { User, UserLogin } from "@/app/core/types";
-import { validateEmail } from "@/app/core/utils/global";
+import { APIUtils } from "@/core/utils/api";
+import { User, UserLogin } from "@/core/types";
+import { validateEmail } from "@/core/utils/global";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "@/app/core/state/app";
+import { useAppStore } from "@/core/state/app";
 
 export const HomePage = () => {
   const router = useRouter();

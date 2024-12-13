@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppStore } from "@/app/core/state/app";
+import { useAppStore } from "@/core/state/app";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

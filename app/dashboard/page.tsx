@@ -1,7 +1,13 @@
-import { DashboardPageComponent } from "../components/pages/dashboard";
+"use client";
 
-export const DashboardPage = () => {
-  return <DashboardPageComponent />;
-};
+import { DashboardPageComponent } from "../../components/pages/dashboard";
+import { SessionValidation } from "../../components/organisms/sessionValidation";
 
-export default DashboardPage;
+export default function Dashboard() {
+  return (
+    <>
+      <SessionValidation />
+      <DashboardPageComponent />
+    </>
+  );
+}

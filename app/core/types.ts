@@ -46,6 +46,7 @@ export interface MapMarker {
   month: string;
   segment_type: string;
   NSE: number;
+  region: string;
 }
 
 export enum MapMode {
@@ -65,6 +66,7 @@ export interface MapRegion {
   latitude: string;
   longitude: string;
   radius: number;
+  uuid: string;
 }
 
 export interface MapCoords {
@@ -103,4 +105,16 @@ export enum City {
 export interface SellerHistoricalData {
   month: number;
   sales: number;
+}
+
+export interface PrescriptionManagement {
+  uuid: string;
+  prescription: string;
+  city: string;
+  executedOutcome: number;
+  startDate: number;
+  endsDate: number;
+  owner: string;
+  impactStatus: number;
+  deploymentRate: number;
 }

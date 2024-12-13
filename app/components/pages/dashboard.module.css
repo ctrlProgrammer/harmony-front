@@ -4,29 +4,6 @@
   margin-top: 25px;
 }
 
-.dashBoard > div.header {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  border-radius: 5px;
-  padding: 10px;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 95%;
-  margin: 0 auto;
-}
-
-.dashBoard > div.header > div:nth-child(1) > p {
-  font-size: 12px;
-}
-
-.dashBoard > div.header > div:nth-child(2) > svg {
-  cursor: pointer;
-  margin: 5px;
-  padding: 3px;
-}
-
 .distribution {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   padding: 15px;
@@ -38,22 +15,6 @@
 .distribution > div.map {
   position: relative;
   height: 500px;
-}
-
-.distribution > div.header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  align-items: center;
-}
-
-.distribution > div.header > div:nth-child(1) > p {
-  font-size: 12px;
-}
-
-.distribution > div.header > div:nth-child(2) > svg {
-  margin: 5px;
-  cursor: pointer;
 }
 
 .mapConfig {
@@ -151,51 +112,6 @@
   color: white;
   font-size: 12px;
   text-transform: uppercase;
-}
-
-.prescriptions {
-  margin-top: 15px;
-}
-
-.prescriptions > div {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  max-height: 400px;
-  justify-content: center;
-  overflow-y: auto;
-}
-
-.prescriptions > div > div {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  width: 260px;
-  margin: 4px;
-  padding: 10px;
-  position: relative;
-  height: 150px;
-}
-
-.prescriptions > div > div > p {
-  font-size: 14px;
-  margin-top: 7px;
-}
-
-.prescriptions > div > div > div {
-  display: flex;
-  margin-bottom: 0;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  left: 0;
-  padding: 0 5px;
-}
-
-.prescriptions > div > div > div > button:nth-child(1) {
-  background: rgb(168, 48, 48);
-}
-
-.prescriptions > div > div > div > button:nth-child(2) {
-  background: rgb(71, 155, 32);
 }
 
 .byPerformance {

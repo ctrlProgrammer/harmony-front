@@ -1,11 +1,11 @@
-import { APIProvider, Map, Marker, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
-import styles from "./mapView.module.css";
-
-import { Circle } from "./components/circle";
 import React, { useEffect, useState } from "react";
+import { APIProvider, Map, Marker, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
+import { Circle } from "./components/circle";
 import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
 import { distanceBetweenPoints, isPointInCircle, milesToM } from "@/app/core/utils/global";
 import Heatmap from "./components/heatmap";
+
+import styles from "./mapView.module.css";
 
 interface MapViewProps {
   defaultCenter: MapCoords;

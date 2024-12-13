@@ -14,24 +14,23 @@ import { City, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/type
 import Switch from "@mui/material/Switch";
 import { FormControlLabel, Slider } from "@mui/material";
 
-import MexicoNeighboors from "../../core/data/city_mexico_ne.json";
-import BogotaNeighboors from "../../core/data/city_bogota_ne.json";
-import MiamiNeighboors from "../../core/data/city_miami_ne.json";
-import Markers from "../../core/data/data.json";
-import Propmts from "../../core/data/posible_prompts.json";
 import { categorizeSellers, generateRandomSellerHistoricalData } from "@/app/core/utils/global";
 import { TreeChart } from "../organisms/charts/tree";
 import { useAppStore } from "@/app/core/state/app";
 import { BarChartComponent } from "../organisms/charts/bar";
-
-const DEFAULT_DATA_BY_CITY = {
-  BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: BogotaNeighboors, city: "Bogotá" },
-  MEXICO_CITY: { center: { lat: 19.431727519606884, lng: -99.1347848053937 }, regions: MexicoNeighboors, city: "Mexico City" },
-  MIAMI: { center: { lat: 25.760518824822164, lng: -80.19682987146976 }, regions: MiamiNeighboors, city: "Miami" },
-};
+import Propmts from "../../core/data/posible_prompts.json";
+import { Header, InternalHeader } from "../organisms/content/header";
+import { GeneratePrescriptions } from "../organisms/prescriptions/generation";
+import Link from "next/link";
 
 export const DashboardPageComponent = () => {
-  const { generatedPrescriptions, generatePrescription, rejectPrescription, acceptPrescription } = useAppStore();
+  const { loadedData, generatedPrescriptions, regions, sellers, generatePrescription, rejectPrescription, acceptPrescription, getSellers, getRegions } = useAppStore();
+
+  const DEFAULT_DATA_BY_CITY = {
+    BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: regions ? regions["BOGOTA"] : [], city: "Bogotá" },
+    MEXICO_CITY: { center: { lat: 19.431727519606884, lng: -99.1347848053937 }, regions: regions ? regions["MEXICO_CITY"] : [], city: "Mexico City" },
+    MIAMI: { center: { lat: 25.760518824822164, lng: -80.19682987146976 }, regions: regions ? regions["MIAMI"] : [], city: "Miami" },
+  };
 
   const [city, setCity] = useState<City>(City.BOGOTA);
   const [center, setCenter] = useState(DEFAULT_DATA_BY_CITY[City.BOGOTA].center);
@@ -47,9 +46,8 @@ export const DashboardPageComponent = () => {
   const [configFocusOnLiters, setFocusOnLiters] = useState(false);
   const [configFocusOnUnits, setFocusOnUnits] = useState(false);
 
-  const maxValue = Math.max(...(Markers && Array.isArray(Markers) ? Markers : []).map((maker) => (configFocusOnSales ? maker.sales_usd : configFocusOnLiters ? maker.sales_liters : maker.sales_units)));
-  const filteredDistributors = (Markers && Array.isArray(Markers) ? Markers : []).filter((mk) => mk.city === DEFAULT_DATA_BY_CITY[city].city);
-
+  const filteredDistributors = sellers ? sellers[city] : [];
+  const maxValue = Math.max(...(filteredDistributors && Array.isArray(filteredDistributors) ? filteredDistributors : []).map((maker) => (configFocusOnSales ? maker.sales_usd : configFocusOnLiters ? maker.sales_liters : maker.sales_units)));
   const [totalFilter, setTotalFilter] = useState<Array<number>>([0, maxValue]);
 
   let sortedSellers: MapMarker[] = [];
@@ -94,29 +92,40 @@ export const DashboardPageComponent = () => {
     lowSellers = lowPerformers;
   }
 
-  return (
+  useEffect(() => {
+    if (loadedData) {
+      if (!sellers) getSellers();
+      if (!regions) getRegions();
+    }
+  }, [loadedData]);
+
+  return regions && filteredDistributors && filteredDistributors.length > 0 ? (
     <div className={styles.dashBoard}>
-      <div className={styles.header}>
-        <div>
-          <h4>Dashboard</h4>
-          <p>Harmony - Global Actionable Knowledge</p>
-        </div>
-        <div>
-          <FontAwesomeIcon icon={faMapLocationDot} />
-          <FontAwesomeIcon icon={faChartBar} />
-          <FontAwesomeIcon icon={faUsers} />
-        </div>
-      </div>
+      <Header
+        title="Dashboard"
+        subtitle="Harmony - Global Actionable Knowledge"
+        actions={
+          <>
+            <Link href={"/dashboard"}>
+              <FontAwesomeIcon icon={faMapLocationDot} />
+            </Link>
+            <Link href={"/manager"}>
+              <FontAwesomeIcon icon={faChartBar} />
+            </Link>
+          </>
+        }
+      />
       <div className={styles.distribution}>
-        <div className={styles.header}>
-          <div>
-            <h4>Distribution map</h4>
-            <p>Discover all the information about distribution</p>
-          </div>
-          <div>
-            <FontAwesomeIcon onClick={() => setCenter(DEFAULT_DATA_BY_CITY[city].center)} icon={faMapPin} />
-          </div>
-        </div>
+        <InternalHeader
+          title="Distribution map"
+          subtitle="Discover all the information about distribution"
+          actions={
+            <>
+              <FontAwesomeIcon onClick={() => setCenter(DEFAULT_DATA_BY_CITY[city].center)} icon={faMapPin} />
+            </>
+          }
+        />
+
         <div className={styles.citySelection}>
           <button
             onClick={() => {
@@ -279,38 +288,7 @@ export const DashboardPageComponent = () => {
           </div>
         </div>
       </div>
-      <div className={styles.distribution}>
-        <div className={styles.header} style={{ marginBottom: 5 }}>
-          <div>
-            <h4>Generate prescriptions ({city})</h4>
-            <p>Solve problems or improve your distribution on {city}. Use the filters on the map to create clusters and fincrease the precision of the prescriptions.</p>
-          </div>
-        </div>
-        <div className={styles.prompt}>
-          <button onClick={() => generatePrescription(city)}>Generate</button>
-        </div>
-
-        <div className={styles.prescriptions}>
-          <h4>Generated prescriptions</h4>
-          <small>Take action or reject proposals</small>
-          <div>
-            {generatedPrescriptions
-              .filter((pres) => pres.city === city && !pres.rejected && !pres.actionable)
-              .map((pres) => {
-                return (
-                  <div>
-                    <h6>City - {pres.city}</h6>
-                    <p>{pres.text}</p>
-                    <div>
-                      <button onClick={() => rejectPrescription(pres.uuid)}>Reject</button>
-                      <button onClick={() => acceptPrescription(pres.uuid)}>Take action</button>
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
-      </div>
+      <GeneratePrescriptions city={city} />
       {regionData && regionData.region ? (
         <div className={styles.distribution}>
           <div className={styles.header}>
@@ -447,5 +425,7 @@ export const DashboardPageComponent = () => {
         ""
       )}
     </div>
+  ) : (
+    ""
   );
 };

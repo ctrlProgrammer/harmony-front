@@ -18,6 +18,7 @@ import MexicoNeighboors from "../../core/data/city_mexico_ne.json";
 import BogotaNeighboors from "../../core/data/city_bogota_ne.json";
 import MiamiNeighboors from "../../core/data/city_miami_ne.json";
 import Markers from "../../core/data/data.json";
+import { categorizeSellers } from "@/app/core/utils/global";
 
 const DEFAULT_DATA_BY_CITY = {
   BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: BogotaNeighboors, city: "Bogotá" },
@@ -50,6 +51,44 @@ export const DashboardPageComponent = () => {
   const filteredDistributors = (Markers && Array.isArray(Markers) ? Markers : []).filter((mk) => mk.city === DEFAULT_DATA_BY_CITY[city].city);
 
   const [totalFilter, setTotalFilter] = useState<Array<number>>([0, maxValue]);
+
+  let sortedSellers: MapMarker[] = [];
+  let averageSalesPerSeller = 0;
+  let averageUnitsPerSeller = 0;
+  let averagelitersPerSeller = 0;
+  let totalSales = 0;
+  let topSellerSales = 0;
+  let topSellerName = "";
+  let topSellers = [];
+  let mediumSellers = [];
+  let lowSellers = [];
+  let separationByProducts = {};
+
+  if (regionData != null && regionData.distributors.length > 0) {
+    sortedSellers = [...regionData.distributors].sort((a, b) => b.sales_usd - a.sales_usd);
+
+    for (let i = 0; i < sortedSellers.length; i++) {
+      if (sortedSellers[i].sales_usd > topSellerSales) {
+        topSellerSales = sortedSellers[i].sales_usd;
+        topSellerName = sortedSellers[i].vendor_name;
+      }
+
+      totalSales += sortedSellers[i].sales_usd;
+      averageSalesPerSeller += sortedSellers[i].sales_usd;
+      averageUnitsPerSeller += sortedSellers[i].sales_units;
+      averagelitersPerSeller += sortedSellers[i].sales_liters;
+    }
+
+    averageSalesPerSeller /= sortedSellers.length;
+    averageUnitsPerSeller /= sortedSellers.length;
+    averagelitersPerSeller /= sortedSellers.length;
+
+    const { lowPerformers, mediumPerformers, topPerformers } = categorizeSellers(sortedSellers);
+
+    topSellers = topPerformers;
+    mediumSellers = mediumPerformers;
+    lowSellers = lowPerformers;
+  }
 
   return (
     <div className={styles.dashBoard}>
@@ -212,8 +251,8 @@ export const DashboardPageComponent = () => {
                 <h4>All</h4>
                 <small>Compare all distributors on the selected region</small>
               </div>
-              {regionData.distributors && Array.isArray(regionData.distributors)
-                ? regionData.distributors.map((dist, index) => {
+              {sortedSellers && Array.isArray(sortedSellers)
+                ? sortedSellers.map((dist, index) => {
                     return (
                       <div onClick={() => setSelectedDistributor(dist)} className={selectedDistributor != null && selectedDistributor.pdv === dist.pdv ? styles.active : ""} key={dist.pdv + "_" + dist.vendor_code + "_" + index + "_" + dist.gps_coordinates}>
                         <h5>Vendor: {dist.vendor_name}</h5>
@@ -231,6 +270,18 @@ export const DashboardPageComponent = () => {
                   <>
                     <h4>All sellers</h4>
                     <small>Information and comparation about all sellers on the selected region</small>
+
+                    <div className={styles.basicData}>
+                      <div>
+                        <h6>Total sellers</h6>
+                        <span>{regionData.distributors.length}</span>
+                      </div>
+
+                      <div>
+                        <h6>Average ticket value</h6>
+                        <span>{regionData.distributors.length}</span>
+                      </div>
+                    </div>
                     <div className={styles.distsSales}>
                       <h5>Sales distribution</h5>
                       <div style={{ width: "100%", height: 1000 }}>

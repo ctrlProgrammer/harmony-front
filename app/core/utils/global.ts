@@ -48,8 +48,8 @@ export const milesToM = (miles: number) => {
 
 export const categorizeSellers = (data: MapMarker[]) => {
   const totalSellers = data.length;
-  const topCount = Math.ceil(totalSellers * 0.1); // Top 10%
-  const lowCount = Math.ceil(totalSellers * 0.1); // Bottom 10%
+  const topCount = Math.ceil(totalSellers * 0.01);
+  const lowCount = Math.ceil(totalSellers * 0.01);
   const mediumCount = totalSellers - topCount - lowCount;
   const topPerformers = data.slice(0, topCount);
   const mediumPerformers = data.slice(topCount, topCount + mediumCount);

@@ -91,6 +91,7 @@ export interface Prescription {
   text: string;
   actionable: boolean;
   rejected: boolean;
+  uuid: string;
 }
 
 export enum City {

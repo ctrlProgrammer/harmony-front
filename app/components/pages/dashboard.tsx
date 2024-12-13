@@ -58,8 +58,8 @@ export const DashboardPageComponent = () => {
   let totalSales = 0;
   let topSellerSales = 0;
   let topSellerName = "";
-  let topSellers = [];
-  let lowSellers = [];
+  let topSellers: MapMarker[] = [];
+  let lowSellers: MapMarker[] = [];
   let separationByProducts: any = {};
 
   if (regionData != null && regionData.distributors.length > 0) {
@@ -282,7 +282,7 @@ export const DashboardPageComponent = () => {
         <div className={styles.header} style={{ marginBottom: 5 }}>
           <div>
             <h4>Generate prescriptions ({city})</h4>
-            <p>Solve problems or improve your distribution on {city}</p>
+            <p>Solve problems or improve your distribution on {city}. Use the filters on the map to create clusters and fincrease the precision of the prescriptions.</p>
           </div>
         </div>
         <div className={styles.prompt}>
@@ -367,15 +367,51 @@ export const DashboardPageComponent = () => {
                         <span>${Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(topSellerSales)}</span>
                       </div>
                     </div>
+
                     <div className={styles.distsSales}>
                       <h4>Sales distribution by product</h4>
                       <small>Total sales by product on selected district</small>
                       <div style={{ width: "100%", height: 400, marginTop: 10 }}>
                         <TreeChart
                           data={Object.keys(separationByProducts).map((product) => {
-                            return { name: product, size: separationByProducts[product] };
+                            return { name: product, size: separationByProducts[product], percentage: (separationByProducts[product] * 100) / totalSales };
                           })}
                         />
+                      </div>
+                    </div>
+
+                    <div className={styles.byPerformance}>
+                      <div>
+                        <h5>Top performers (1%)</h5>
+                        <div>
+                          {topSellers
+                            ? topSellers.map((seller) => {
+                                return (
+                                  <div>
+                                    <h5>{seller.vendor_name}</h5>
+                                    <span>Sales: $ {Intl.NumberFormat().format(seller.sales_usd)}</span>
+                                    <span>Product: {seller.product_name}</span>
+                                  </div>
+                                );
+                              })
+                            : ""}
+                        </div>
+                      </div>
+                      <div>
+                        <h5>Low performers (1%)</h5>
+                        <div>
+                          {lowSellers
+                            ? lowSellers.map((seller) => {
+                                return (
+                                  <div>
+                                    <h5>{seller.vendor_name}</h5>
+                                    <span>Sales: $ {Intl.NumberFormat().format(seller.sales_usd)}</span>
+                                    <span>Product: {seller.product_name}</span>
+                                  </div>
+                                );
+                              })
+                            : ""}
+                        </div>
                       </div>
                     </div>
                   </>

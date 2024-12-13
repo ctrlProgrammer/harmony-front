@@ -197,3 +197,30 @@
 .prescriptions > div > div > div > button:nth-child(2) {
   background: rgb(71, 155, 32);
 }
+
+.byPerformance {
+  display: flex;
+  margin-top: 15px;
+}
+
+.byPerformance > div {
+  flex: 0 0 50%;
+}
+
+.byPerformance > div > h5 {
+  font-size: 14px;
+}
+
+.byPerformance > div > div > div {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  width: 95%;
+  margin-bottom: 5px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.byPerformance > div > div > div > h5 {
+  font-size: 14px;
+}

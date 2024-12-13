@@ -9,7 +9,7 @@ import { faJediOrder } from "@fortawesome/free-brands-svg-icons";
 import { faAlignCenter, faFire, faMapLocation, faMapMarked, faMapPin, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faMapLocationDot } from "@fortawesome/free-solid-svg-icons/faMapLocationDot";
 import { useEffect, useState } from "react";
-import { MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
+import { City, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
 
 import Switch from "@mui/material/Switch";
 import { FormControlLabel, Slider } from "@mui/material";
@@ -18,8 +18,10 @@ import MexicoNeighboors from "../../core/data/city_mexico_ne.json";
 import BogotaNeighboors from "../../core/data/city_bogota_ne.json";
 import MiamiNeighboors from "../../core/data/city_miami_ne.json";
 import Markers from "../../core/data/data.json";
+import Propmts from "../../core/data/posible_prompts.json";
 import { categorizeSellers } from "@/app/core/utils/global";
 import { TreeChart } from "../organisms/charts/tree";
+import { useAppStore } from "@/app/core/state/app";
 
 const DEFAULT_DATA_BY_CITY = {
   BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: BogotaNeighboors, city: "Bogotá" },
@@ -27,13 +29,9 @@ const DEFAULT_DATA_BY_CITY = {
   MIAMI: { center: { lat: 25.760518824822164, lng: -80.19682987146976 }, regions: MiamiNeighboors, city: "Miami" },
 };
 
-enum City {
-  BOGOTA = "BOGOTA",
-  MEXICO_CITY = "MEXICO_CITY",
-  MIAMI = "MIAMI",
-}
-
 export const DashboardPageComponent = () => {
+  const { generatedPrescriptions, generatePrescription, rejectPrescription, acceptPrescription } = useAppStore();
+
   const [city, setCity] = useState<City>(City.BOGOTA);
   const [center, setCenter] = useState(DEFAULT_DATA_BY_CITY[City.BOGOTA].center);
 
@@ -277,6 +275,38 @@ export const DashboardPageComponent = () => {
               max={maxValue}
             />
             <small>We filter by different attributes to get wholesalers, distributors or subdistributors (It is not the best implementation but for now it is simple)</small>
+          </div>
+        </div>
+      </div>
+      <div className={styles.distribution}>
+        <div className={styles.header} style={{ marginBottom: 5 }}>
+          <div>
+            <h4>Generate prescriptions ({city})</h4>
+            <p>Solve problems or improve your distribution on {city}</p>
+          </div>
+        </div>
+        <div className={styles.prompt}>
+          <button onClick={() => generatePrescription(city)}>Generate</button>
+        </div>
+
+        <div className={styles.prescriptions}>
+          <h4>Generated prescriptions</h4>
+          <small>Take action or reject proposals</small>
+          <div>
+            {generatedPrescriptions
+              .filter((pres) => pres.city === city && !pres.rejected && !pres.actionable)
+              .map((pres) => {
+                return (
+                  <div>
+                    <h6>City - {pres.city}</h6>
+                    <p>{pres.text}</p>
+                    <div>
+                      <button onClick={() => rejectPrescription(pres.uuid)}>Reject</button>
+                      <button onClick={() => acceptPrescription(pres.uuid)}>Take action</button>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>

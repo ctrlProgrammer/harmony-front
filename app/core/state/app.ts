@@ -1,24 +1,32 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { User, UserLogin } from "../types";
+import { City, Prescription, User, UserLogin } from "../types";
 import { APIUtils } from "../utils/api";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid";
+
+import PossiblePrompts from "../data/posible_prompts.json";
 
 interface AppState {
   user: User | null;
   sessionCode: string | null;
   loadedData: boolean;
+  generatedPrescriptions: Prescription[];
   login: (login: UserLogin) => Promise<boolean>;
   validateSession: (email: string, sessionCode: string) => Promise<boolean>;
   preloadSession: () => void;
+  generatePrescription: (city: City) => void;
+  rejectPrescription: (uuid: string) => void;
+  acceptPrescription: (uuid: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       sessionCode: null,
       loadedData: false,
+      generatedPrescriptions: [],
       login: async (login) => {
         return new Promise((res) => {
           APIUtils.Login(login).then((data) => {
@@ -48,6 +56,30 @@ export const useAppStore = create<AppState>()(
       },
       preloadSession: () => {
         set({ loadedData: true });
+      },
+      generatePrescription: (city: City) => {
+        const totalPromts = PossiblePrompts.BY_CITIES.filter((promt) => promt.city === city);
+        const randomPromt = Math.floor(Math.random() * totalPromts.length);
+        const pre = { uuid: uuidv4(), city: city.toString(), text: totalPromts[randomPromt].prescription, actionable: false, rejected: false } as Prescription;
+        set({ generatedPrescriptions: [...get().generatedPrescriptions, pre] });
+      },
+      rejectPrescription: (uuid: string) => {
+        const prescriptions = [...get().generatedPrescriptions];
+        const searchedPrescription = prescriptions.findIndex((pres) => pres.uuid === uuid);
+
+        if (searchedPrescription != -1) {
+          prescriptions[searchedPrescription].rejected = true;
+          set({ generatedPrescriptions: prescriptions });
+        }
+      },
+      acceptPrescription: (uuid: string) => {
+        const prescriptions = [...get().generatedPrescriptions];
+        const searchedPrescription = prescriptions.findIndex((pres) => pres.uuid === uuid);
+
+        if (searchedPrescription != -1) {
+          prescriptions[searchedPrescription].actionable = true;
+          set({ generatedPrescriptions: prescriptions });
+        }
       },
     }),
     {

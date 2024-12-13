@@ -85,3 +85,16 @@ export interface RegionData {
   totalSales: number;
   totalUnits: number;
 }
+
+export interface Prescription {
+  city: string;
+  text: string;
+  actionable: boolean;
+  rejected: boolean;
+}
+
+export enum City {
+  BOGOTA = "BOGOTA",
+  MEXICO_CITY = "MEXICO_CITY",
+  MIAMI = "MIAMI",
+}

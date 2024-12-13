@@ -3,7 +3,7 @@ import styles from "./mapView.module.css";
 
 import { Circle } from "./components/circle";
 import { useEffect, useState } from "react";
-import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion } from "@/app/core/types";
+import { HeatMapCoords, MapCoords, MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
 import { distanceBetweenPoints, isPointInCircle, milesToM } from "@/app/core/utils/global";
 import Heatmap from "./components/heatmap";
 
@@ -18,16 +18,14 @@ interface MapViewProps {
   mexicoData: MapRegion[];
   distributorsData: MapMarker[];
   totalFilter: Array<number>;
+  onChangeRegion: (regionData: RegionData) => void;
   onChangeCenter: (coors: MapCoords) => void;
 }
 
 export const MapView = (props: MapViewProps) => {
   const [selectedRegion, setSelectedRegion] = useState<MapRegion | null>(null);
-  const [availableMarkers, setAvailableMarkers] = useState<MapMarker[]>([]);
   const [heatMapMarkers, setHeatMapMarkers] = useState<HeatMapCoords[]>([]);
-  const [totalSales, setTotalSales] = useState<number>(0);
-  const [totalUnits, setTotalUnits] = useState<number>(0);
-  const [totalLiters, setTotalLiters] = useState<number>(0);
+  const [regionData, setRegionData] = useState<RegionData | null>(null);
   const [loadMap, setLoadMap] = useState<boolean>(true);
 
   const searchLocatedMarkers = () => {
@@ -61,10 +59,17 @@ export const MapView = (props: MapViewProps) => {
     }
 
     setHeatMapMarkers(heatMapPoints);
-    setAvailableMarkers(points);
-    setTotalSales(totalSales);
-    setTotalUnits(totalUnits);
-    setTotalLiters(totalLiters);
+
+    const regionData = {
+      distributors: points,
+      totalLiters: totalLiters,
+      totalSales: totalSales,
+      totalUnits: totalUnits,
+      region: selectedRegion,
+    } as RegionData;
+
+    setRegionData(regionData);
+    props.onChangeRegion(regionData);
     setLoadMap(false);
   };
 
@@ -99,8 +104,8 @@ export const MapView = (props: MapViewProps) => {
             ) : (
               ""
             )
-          ) : availableMarkers && Array.isArray(availableMarkers) ? (
-            availableMarkers.map((mapData, index) => {
+          ) : regionData?.distributors && Array.isArray(regionData?.distributors) ? (
+            regionData?.distributors.map((mapData, index) => {
               return <Marker position={{ lat: mapData.latitude, lng: mapData.longitude }} clickable={true} onClick={() => alert("marker was clicked!")} title={"clickable google.maps.Marker"} />;
             })
           ) : (
@@ -143,10 +148,10 @@ export const MapView = (props: MapViewProps) => {
               pixelOffset={[0, -2]}
             >
               <ul>
-                <li>Total businesses: {availableMarkers.length}</li>
-                <li>Total Sales: $ {Intl.NumberFormat("en-US").format(totalSales)}</li>
-                <li>Total Liters: {Intl.NumberFormat("en-US").format(totalLiters)}</li>
-                <li>Total Units: {Intl.NumberFormat("en-US").format(totalUnits)}</li>
+                <li>Total businesses: {regionData?.distributors.length}</li>
+                <li>Total Sales: $ {Intl.NumberFormat("en-US").format(regionData?.totalSales || 0)}</li>
+                <li>Total Liters: {Intl.NumberFormat("en-US").format(regionData?.totalLiters || 0)}</li>
+                <li>Total Units: {Intl.NumberFormat("en-US").format(regionData?.totalUnits || 0)}</li>
               </ul>
             </InfoWindow>
           ) : (

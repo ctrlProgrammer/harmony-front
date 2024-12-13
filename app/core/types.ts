@@ -77,3 +77,11 @@ export interface HeatMapCoords {
   lng: number;
   weight: number;
 }
+
+export interface RegionData {
+  distributors: MapMarker[];
+  region: MapRegion;
+  totalLiters: number;
+  totalSales: number;
+  totalUnits: number;
+}

@@ -9,7 +9,7 @@ import { faJediOrder } from "@fortawesome/free-brands-svg-icons";
 import { faAlignCenter, faFire, faMapLocation, faMapMarked, faMapPin, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faMapLocationDot } from "@fortawesome/free-solid-svg-icons/faMapLocationDot";
 import { useEffect, useState } from "react";
-import { MapMode, MapRegion } from "@/app/core/types";
+import { MapMarker, MapMode, MapRegion, RegionData } from "@/app/core/types";
 
 import Switch from "@mui/material/Switch";
 import { FormControlLabel, Slider } from "@mui/material";
@@ -22,7 +22,8 @@ const DEFAULT_CENTER = { lat: 19.431727519606884, lng: -99.1347848053937 };
 export const DashboardPageComponent = () => {
   const [center, setCenter] = useState(DEFAULT_CENTER);
 
-  const [selectedDistrict, setSelectedDistrict] = useState<MapRegion | null>(null);
+  const [regionData, setRegionData] = useState<RegionData | null>(null);
+  const [selectedDistributor, setSelectedDistributor] = useState<MapMarker | null>(null);
 
   // Configuration
   const [configDistricts, setDistricts] = useState(true);
@@ -61,6 +62,7 @@ export const DashboardPageComponent = () => {
         <div className={styles.map}>
           {Markers && Array.isArray(Markers) ? (
             <MapView
+              onChangeRegion={(region) => setRegionData(region)}
               totalFilter={totalFilter}
               distributorsData={Markers}
               mexicoData={MexicoNeighboors}
@@ -148,16 +150,33 @@ export const DashboardPageComponent = () => {
           </div>
         </div>
       </div>
-      {selectedDistrict ? (
+      {regionData && regionData.region ? (
         <div className={styles.distribution}>
           <div className={styles.header}>
             <div>
-              <h4>District information</h4>
+              <h4>District information ({regionData.region.name})</h4>
               <p>Everything about the district</p>
             </div>
-            <div>
-              <FontAwesomeIcon onClick={() => setCenter(DEFAULT_CENTER)} icon={faMapPin} />
+          </div>
+          <div className={styles.districtData}>
+            <div className={styles.distributors}>
+              <div className={selectedDistributor == null ? styles.active : ""}>
+                <h4>All</h4>
+                <small>Compare all distributors on the selected region</small>
+              </div>
+              {regionData.distributors && Array.isArray(regionData.distributors)
+                ? regionData.distributors.map((dist) => {
+                    return (
+                      <div className={selectedDistributor != null && selectedDistributor.pdv === dist.pdv ? styles.active : ""} key={dist.pdv + "_" + dist.vendor_code}>
+                        <h4>{dist.address}</h4>
+                        <small>Product: {dist.product_name}</small>
+                      </div>
+                    );
+                  })
+                : ""}
             </div>
+
+            <div className={styles.distData}></div>
           </div>
         </div>
       ) : (

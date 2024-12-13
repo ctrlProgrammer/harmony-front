@@ -37,9 +37,9 @@ class CustomizedContent extends PureComponent<any> {
             <text x={x + width / 2} y={y + height / 2} textAnchor="middle" fill="#fff" style={{ textTransform: "uppercase", fontWeight: "lighter" }} fontSize={10}>
               {name}
             </text>
-            <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" fill="#fff" style={{ textTransform: "uppercase", fontWeight: "lighter" }} fontSize={10}>
+            {/* <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" fill="#fff" style={{ textTransform: "uppercase", fontWeight: "lighter" }} fontSize={10}>
               {percentage.toFixed(1)}%
-            </text>
+            </text> */}
           </>
         ) : null}
         {depth === 1 ? (
@@ -58,7 +58,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div style={{ background: "white", padding: 10, borderRadius: 3, boxShadow: "0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)" }} className="treemap-custom-tooltip">
         <p style={{ textTransform: "uppercase", fontSize: 11 }}>{`${payload[0].payload.name}`}</p>
         <p style={{ textTransform: "uppercase", fontSize: 12 }}>{`Total sales : $ ${Intl.NumberFormat().format(payload[0].value)}`}</p>
-        {payload[0].payload?.percentage ? <p style={{ textTransform: "uppercase", fontSize: 12 }}>{`Representation: ${payload[0].payload.percentage.toFixed(2)}%`}</p> : ""}
+        {/* {payload[0].payload?.percentage ? <p style={{ textTransform: "uppercase", fontSize: 12 }}>{`Representation: ${payload[0].payload.percentage.toFixed(2)}%`}</p> : ""} */}
       </div>
     );
   }

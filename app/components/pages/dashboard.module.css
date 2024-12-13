@@ -109,6 +109,7 @@
 
 .distsSales {
   width: 100%;
+  margin-top: 15px;
 }
 
 .citySelection {
@@ -124,4 +125,30 @@
 
 .citySelection > button:disabled {
   background: grey;
+}
+
+.basicData {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.basicData > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  flex-direction: column;
+  width: 150px;
+  height: 50px;
+  padding: 5px;
+  margin: 3px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 2px;
+}
+
+.basicData > div > span,
+.basicData > div > h6 {
+  color: white;
+  font-size: 12px;
+  text-transform: uppercase;
 }

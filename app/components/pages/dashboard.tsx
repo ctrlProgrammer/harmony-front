@@ -19,6 +19,7 @@ import BogotaNeighboors from "../../core/data/city_bogota_ne.json";
 import MiamiNeighboors from "../../core/data/city_miami_ne.json";
 import Markers from "../../core/data/data.json";
 import { categorizeSellers } from "@/app/core/utils/global";
+import { TreeChart } from "../organisms/charts/tree";
 
 const DEFAULT_DATA_BY_CITY = {
   BOGOTA: { center: { lat: 4.711812938421693, lng: -74.07311329082448 }, regions: BogotaNeighboors, city: "Bogotá" },
@@ -60,9 +61,8 @@ export const DashboardPageComponent = () => {
   let topSellerSales = 0;
   let topSellerName = "";
   let topSellers = [];
-  let mediumSellers = [];
   let lowSellers = [];
-  let separationByProducts = {};
+  let separationByProducts: any = {};
 
   if (regionData != null && regionData.distributors.length > 0) {
     sortedSellers = [...regionData.distributors].sort((a, b) => b.sales_usd - a.sales_usd);
@@ -77,16 +77,21 @@ export const DashboardPageComponent = () => {
       averageSalesPerSeller += sortedSellers[i].sales_usd;
       averageUnitsPerSeller += sortedSellers[i].sales_units;
       averagelitersPerSeller += sortedSellers[i].sales_liters;
+
+      if (Object.keys(separationByProducts).includes(sortedSellers[i].product_name)) {
+        separationByProducts[sortedSellers[i].product_name] += sortedSellers[i].sales_usd;
+      } else {
+        separationByProducts[sortedSellers[i].product_name] = sortedSellers[i].sales_usd;
+      }
     }
 
     averageSalesPerSeller /= sortedSellers.length;
     averageUnitsPerSeller /= sortedSellers.length;
     averagelitersPerSeller /= sortedSellers.length;
 
-    const { lowPerformers, mediumPerformers, topPerformers } = categorizeSellers(sortedSellers);
+    const { lowPerformers, topPerformers } = categorizeSellers(sortedSellers);
 
     topSellers = topPerformers;
-    mediumSellers = mediumPerformers;
     lowSellers = lowPerformers;
   }
 
@@ -276,20 +281,33 @@ export const DashboardPageComponent = () => {
                         <h6>Total sellers</h6>
                         <span>{regionData.distributors.length}</span>
                       </div>
-
                       <div>
-                        <h6>Average ticket value</h6>
-                        <span>{regionData.distributors.length}</span>
+                        <h6>Average sales</h6>
+                        <span>$ {Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(averageSalesPerSeller)}</span>
+                      </div>
+                      <div>
+                        <h6>Average liters</h6>
+                        <span>{Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(averagelitersPerSeller)}</span>
+                      </div>
+                      <div>
+                        <h6>Average units</h6>
+                        <span>{Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(averageUnitsPerSeller)}</span>
+                      </div>
+                      <div>
+                        <h6>Top seller</h6>
+                        <span>{topSellerName}</span>
+                        <span>${Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(topSellerSales)}</span>
                       </div>
                     </div>
                     <div className={styles.distsSales}>
-                      <h5>Sales distribution</h5>
-                      <div style={{ width: "100%", height: 1000 }}>
-                        {/* <TreeChart
-                          data={regionData.distributors.map((dist) => {
-                            return { name: dist.vendor_name, size: dist.sales_usd, percentage: (dist.sales_usd * 100) / regionData.totalSales };
+                      <h4>Sales distribution by product</h4>
+                      <small>Total sales by product on selected district</small>
+                      <div style={{ width: "100%", height: 400, marginTop: 10 }}>
+                        <TreeChart
+                          data={Object.keys(separationByProducts).map((product) => {
+                            return { name: product, size: separationByProducts[product] };
                           })}
-                        /> */}
+                        />
                       </div>
                     </div>
                   </>

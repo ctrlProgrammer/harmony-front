@@ -1,8 +1,8 @@
 import { User, UserLogin, ValidateSession } from "../types";
 
 export class APIUtils {
-  static readonly HOST = "http://localhost:9101";
-  static readonly DATA_HOST = "http://localhost:9102";
+  static readonly HOST = "https://auth.harmony.businessbuilders.city";
+  static readonly DATA_HOST = "https://data.harmony.businessbuilders.city";
 
   static async GET(api: string, url: string) {
     const req = await fetch(api + url, {
